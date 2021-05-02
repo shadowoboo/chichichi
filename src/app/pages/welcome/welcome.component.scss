@@ -1,0 +1,14 @@
+.pagw-wrap{
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    .charts-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        .demo-chart {
+            height: 400px;
+            width: 600px;
+        }
+    }
+}
+  

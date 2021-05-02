@@ -1,0 +1,13 @@
+<div class="page-wrap">
+    <h1>Get Data</h1>
+    
+    <!-- <P>{{ (rawData | json) || 'null' }}</P> -->
+    <!-- <P>{{ (rawData ) || 'null' }}</P> -->
+    <button (click)="getData()"> get Data</button>
+    <div class="charts-wrap">
+        <ng-container *ngFor="let item of options; let index = index">
+            <div echarts [options]="item" [merge]="mergeData?.get(item?.title?.text)" class="demo-chart"></div>
+            <!-- <div echarts [options]="item"  class="demo-chart"></div> -->
+        </ng-container>
+    </div>
+</div>
