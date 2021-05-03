@@ -119,6 +119,25 @@ const basicOption: EChartsOption = {
   title: {
     text: "X: 時間 ; Y: chip 數值"
   },
+  dataZoom:[
+    {
+      type: 'slider',
+      xAxisIndex: 0,
+      height: 20,
+      bottom: 0,
+      start: 0,
+      end: 100,
+    },
+    {
+      type: 'slider',
+      yAxisIndex: 0,
+      width: 15,
+      top: 0,
+      bottom: 50,
+      start: 0,
+      end: 100,
+    },
+  ],
   tooltip: {
     trigger: "axis",
     // formatter: function(params) {
