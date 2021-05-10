@@ -14,6 +14,7 @@ import { IconsProviderModule } from './icons-provider.module';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NgxEchartsModule } from 'ngx-echarts';
+import { MaterialModule } from './modules/material.module';
 
 registerLocaleData(zh);
 
@@ -30,6 +31,7 @@ registerLocaleData(zh);
     IconsProviderModule,
     NzLayoutModule,
     NzMenuModule,
+    MaterialModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     })

@@ -5,10 +5,22 @@
     .charts-wrap {
         display: flex;
         flex-wrap: wrap;
+
         .demo-chart {
             height: 400px;
             width: 600px;
         }
     }
+}
+
+.charts-viewport {
+    min-height: 400px;
+    width: 100%;
+    // border: 1px solid black;
+}
+    
+.chart-item{
+    height: 400px;
+    width: 600px;
 }
   

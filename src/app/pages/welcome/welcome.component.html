@@ -5,9 +5,17 @@
     <!-- <P>{{ (rawData ) || 'null' }}</P> -->
     <!-- <button (click)="getData()"> get Data</button> -->
     <div class="charts-wrap">
-        <ng-container *ngFor="let item of options; let index = index">
-            <div echarts [options]="item" [merge]="mergeData?.get(item?.title?.text)" class="demo-chart"></div>
+        <!-- <ng-container *ngFor="let item of options; let index = index"> -->
+            <!-- <div echarts [options]="item" [merge]="mergeData?.get(item?.title?.text)" class="demo-chart"></div> -->
             <!-- <div echarts [options]="item"  class="demo-chart"></div> -->
-        </ng-container>
+        <!-- </ng-container> -->
+        
+        <cdk-virtual-scroll-viewport [itemSize]="options?.length" class="charts-viewport">
+            <!-- <div *cdkVirtualFor="let item of items" class="example-item">{{item}}</div> -->
+
+            <ng-container *cdkVirtualFor="let item of options; let index = index">
+                <div echarts [options]="item" [merge]="mergeData?.get(item?.title?.text)" class="chart-item"></div>
+            </ng-container>
+        </cdk-virtual-scroll-viewport>
     </div>
 </div>
