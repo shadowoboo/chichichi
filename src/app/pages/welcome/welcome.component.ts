@@ -2,13 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import { Subject, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { IToARuChipInfo } from 'src/app/models/a-ru-chip';
+import { CoreServiceService } from 'src/app/services/core-service.service';
 
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
-  styleUrls: ['./welcome.component.scss']
+  styleUrls: ['./welcome.component.scss'],
+  providers: [CoreServiceService],
 })
 export class WelcomeComponent implements OnInit, OnDestroy {
 
@@ -24,20 +26,91 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   unsubscribeAll$ = new Subject();
   
 
-  constructor( private http: HttpClient) { }
+  constructor(
+     private http: HttpClient,
+     private coreService: CoreServiceService,
+  ) { 
+    console.log('LinkUrl: ', this.coreService.LinkUrl)
+    this.coreService.LinkUrl$.subscribe(url => console.log('Link Url $: ', url))
+  }
 
   ngOnInit() {
-    timer(1,1000)
-      .pipe(
-        takeUntil(this.unsubscribeAll$),
-      )
-      .subscribe(() => this.getData());
+    this.getDataInterval(1, 1000);
+    // timer(1,1000)
+    //   .pipe(
+    //     takeUntil(this.unsubscribeAll$),
+    //   )
+    //   .subscribe(() => this.getData());
   }
 
   ngOnDestroy() {
     this.unsubscribeAll$.next();
     this.unsubscribeAll$.complete();
   }  
+
+  getDataInterval(initTimeMs: number, piriodTimeMs: number){
+    timer(initTimeMs, piriodTimeMs)
+      .pipe(
+        switchMap(() => this.coreService.LinkUrl$),
+        switchMap((url) => this.http.get<IToARuChipInfo>(url)),
+        takeUntil(this.unsubscribeAll$),
+      )
+      .subscribe(
+        res => {
+          // 暫存 資料 (維持在 n 筆)
+          this.rawDatas = this.rawDatas && this.rawDatas.length <= this.dataLimitNumber 
+            ? [...this.rawDatas, res]
+            : [...(this.rawDatas.slice(1)), res];
+
+          if(this.isFirst){
+            // 建立 圖表設定項目 options
+            this.options = res.Chips.map( (rawData) => {
+              return ({
+                ...clone(basicOption),
+                // 更新名稱
+                title: {text: rawData.Name},
+                // data: this.mergeData,
+              })
+            })
+            this.isFirst = false;
+          }
+
+          
+          // 更新 圖表資料 datas, 用 Name 來 Mapping
+          res.Chips.forEach( chipData => {
+            const oldMergeData = this.mergeData.has(chipData.Name) && this.mergeData.get(chipData.Name).series[0].data.length <= this.dataLimitNumber
+              ? this.mergeData.get(chipData.Name).series[0].data 
+              : this.mergeData.has(chipData.Name)
+              ? this.mergeData.get(chipData.Name).series[0].data.slice(1)
+              : [];
+
+            this.mergeData.set(
+              chipData.Name, 
+              // TODO: 資料接收
+              {
+                series: [{
+                  data:  [
+                    ...oldMergeData,
+                    [res.Time, chipData.Data.CURRENT]
+                  ]
+                  // data: oldMergeData.push([res.Time, chipData.Data.CURRENT])
+                }]
+              }
+            
+            )
+          })
+          // console.log(
+            // '\n getData -----',
+            // '\n this.rawDatas: ', this.rawDatas,
+            // '\n this.options: ', this.options,
+            // '\n this.mergeData: ', this.mergeData,
+          // )
+        },
+        err => {
+          console.error(err);
+        }
+      )
+  }
 
   getData(){
     // const ip = '192.168.50.165';
