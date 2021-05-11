@@ -10,9 +10,19 @@ export interface IChipInfo{
 }
 
 export interface IChipValues{
+    // ts7053, 如果有要使用 Object.keys() 要連 index 屬性一起規範
+    [index: string] : number;
     VSHUNT : number;
     VBUS : number;
     CURRENT : number;
     POWER : number;
     SOVL : number;
+}
+
+export enum EChipValuesKey{
+    VSHUNT = 'VSHUNT',
+    VBUS = 'VBUS',
+    CURRENT = 'CURRENT',
+    POWER = 'POWER',
+    SOVL = 'SOVL',
 }

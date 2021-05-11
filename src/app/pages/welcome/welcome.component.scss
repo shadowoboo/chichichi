@@ -14,13 +14,13 @@
 }
 
 .charts-viewport {
-    min-height: 400px;
+    min-height: 500px;
     width: 100%;
-    // border: 1px solid black;
+    border: 1px solid black;
 }
     
 .chart-item{
-    height: 400px;
-    width: 600px;
+    height: 200px;
+    min-width: 800px;
 }
   
